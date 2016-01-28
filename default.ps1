@@ -53,6 +53,10 @@ task BuildDnx {
 }
 
 task CreateNuGetPackages -depends Compile {
+    if(!(Test-Path $buildOutputDir)){
+        New-Item $buildOutputDir -Type Directory
+    }
+
     $versionString = Get-Version $assemblyInfoFilePath
     $version = New-Object Version $versionString
     $packageVersion = $version.Major.ToString() + "." + $version.Minor.ToString() + "." + $version.Build.ToString() + "-build" + $buildNumber.ToString().PadLeft(5,'0')
