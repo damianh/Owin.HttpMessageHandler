@@ -2,12 +2,12 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using FluentAssertions;
     using Microsoft.Owin;
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.Testing;
     using Nowin;
     using Owin;
+    using Shouldly;
     using Xunit;
     using AppFunc = Func<Collections.Generic.IDictionary<string, object>, Threading.Tasks.Task>;
 
@@ -71,7 +71,7 @@
 
                 var setCookies = response.Headers.GetValues("Set-Cookie");
 
-                setCookies.Should().HaveCount(2);
+                setCookies.Count().ShouldBe(2);
             }
         }
 
@@ -99,8 +99,7 @@
                     var response = await client.GetAsync(_uri);
 
                     response.Headers.GetValues("Set-Cookie")
-                        .Should()
-                        .HaveCount(2);
+                        .Count().ShouldBe(2);
                 }
             }
         }
@@ -122,8 +121,8 @@
                     var response = await client.GetAsync(_uri);
 
                     response.Headers.GetValues("Set-Cookie")
-                        .Should()
-                        .HaveCount(2);
+                        .Count()
+                        .ShouldBe(2);
                 }
             }
         }
@@ -137,8 +136,8 @@
                 var response = await client.GetAsync(_uri);
 
                 response.Headers.GetValues("Set-Cookie")
-                    .Should()
-                    .HaveCount(2);
+                    .Count()
+                    .ShouldBe(2);
             }
         }
     }

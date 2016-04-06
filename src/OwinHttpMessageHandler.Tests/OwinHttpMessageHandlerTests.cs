@@ -4,8 +4,8 @@
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
-    using FluentAssertions;
     using Microsoft.Owin;
+    using Shouldly;
     using Xunit;
 
     using AppFunc = System.Func<
@@ -66,20 +66,20 @@
         [Fact]
         public async Task Should_get_status_OK()
         {
-            (await _sut.GetAsync("http://sample.com/OK")).StatusCode.Should().Be(HttpStatusCode.OK);
+            (await _sut.GetAsync("http://sample.com/OK")).StatusCode.ShouldBe(HttpStatusCode.OK);
         }
 
         [Fact]
         public async Task Should_get_status_NotFound()
         {
-            (await _sut.GetAsync("http://sample.com/NotFound")).StatusCode.Should().Be(HttpStatusCode.NotFound);
+            (await _sut.GetAsync("http://sample.com/NotFound")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
         }
 
         [Fact]
         public async Task Should_call_OnSendingHeaders()
         {
             await _sut.GetAsync("http://sample.com/OK");
-            _onSendingHeadersCalled.Should().BeTrue();
+            _onSendingHeadersCalled.ShouldBeTrue();
         }
 
         [Fact]
@@ -90,7 +90,7 @@
                                                          {
                                                              new KeyValuePair<string, string>("Name", "Damian")
                                                          }));
-            (await response.Content.ReadAsStringAsync()).Should().Be("Hello Damian");
+            (await response.Content.ReadAsStringAsync()).ShouldBe("Hello Damian");
         }
 
         [Fact]
@@ -141,6 +141,25 @@
             Action act = () => { handler.CookieContainer = new CookieContainer(); };
 
             act.ShouldThrow<InvalidOperationException>();
+        }
+
+        [Fact]
+        public async Task Environment_should_contain_content_length_header()
+        {
+            OwinContext owinContext = null;
+            var handler = new OwinHttpMessageHandler(env =>
+            {
+                owinContext = new OwinContext(env);
+                return Task.FromResult(0);
+            });
+
+            using (var client = new HttpClient(handler))
+            {
+                var stringContent = new StringContent("hello");
+                await client.PostAsync("http://localhost/", stringContent);
+            }
+
+            owinContext.Request.Headers.ContainsKey("Content-Length").ShouldBeTrue();
         }
     }
     // ReSharper restore InconsistentNaming

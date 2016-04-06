@@ -1,8 +1,8 @@
 ﻿namespace System.Net.Http
 {
     using System.Threading.Tasks;
-    using FluentAssertions;
     using Microsoft.Owin;
+    using Shouldly;
     using Xunit;
 
     using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
@@ -31,28 +31,24 @@
             handler
                 .CookieContainer
                 .GetCookies(uri)[cookieName1]
-                .Should()
-                .NotBeNull();
+                .ShouldNotBeNull();
 
             handler
                 .CookieContainer
                 .GetCookies(uri)[cookieName1]
                 .Value
-                .Should()
-                .Be("c1");
+                .ShouldBe("c1");
 
             handler
                 .CookieContainer
                 .GetCookies(uri)[cookieName2]
-                .Should()
-                .NotBeNull();
+                .ShouldNotBeNull();
 
             handler
                 .CookieContainer
                 .GetCookies(uri)[cookieName2]
                 .Value
-                .Should()
-                .Be("c2");
+                .ShouldBe("c2");
         }
 
         [Fact]
@@ -88,8 +84,7 @@
             handler
                 .CookieContainer
                 .GetCookies(uri)[cookieName1]
-                .Should()
-                .NotBeNull();
+                .ShouldNotBeNull();
         }
     }
 }
