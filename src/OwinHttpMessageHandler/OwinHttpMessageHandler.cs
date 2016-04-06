@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -219,6 +220,7 @@
             }
 
             var state = new RequestState(request, cancellationToken);
+
             HttpContent requestContent = request.Content ?? new StreamContent(Stream.Null);
             Stream body = await requestContent.ReadAsStreamAsync().NotOnCapturedContext();
             if (body.CanSeek)
@@ -315,9 +317,12 @@
                 {
                     owinRequest.Headers.AppendValues(header.Key, header.Value.ToArray());
                 }
-                HttpContent requestContent = request.Content;
-                if (requestContent != null)
+                if (request.Content != null)
                 {
+                    // Need to touch the ContentLength property for it to be calculated and added
+                    // to the request.Content.Headers collection.
+                    var d = request.Content.Headers.ContentLength;
+
                     foreach (var header in request.Content.Headers)
                     {
                         owinRequest.Headers.AppendValues(header.Key, header.Value.ToArray());
