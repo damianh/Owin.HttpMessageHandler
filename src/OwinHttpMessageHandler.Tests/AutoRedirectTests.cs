@@ -2,13 +2,13 @@ namespace System.Net.Http
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Microsoft.Owin;
     using Shouldly;
     using Xunit;
 
     using AppFunc = System.Func<
         Collections.Generic.IDictionary<string, object>,
         System.Threading.Tasks.Task>;
+    using LibOwin;
 
     public class AutoRedirectTests
     {

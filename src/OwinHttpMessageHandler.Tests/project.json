@@ -1,0 +1,35 @@
+{
+    "dependencies": {
+        "dotnet-test-xunit": "1.0.0-rc3-build10019",
+        "Microsoft.NETCore.Platforms": "1.0.1-rc2-24027",
+        "OwinHttpMessageHandler": { "target": "project" },
+        "Shouldly": "2.8.0",
+        "xunit": "2.1.0"
+    },
+   
+    "frameworks": {
+        "net452": {
+            "dependencies": {
+                "Owin": "1.0.0",
+                "Nowin": "0.22.2",
+                "Microsoft.Owin.Testing": "3.0.1",
+                "Microsoft.Owin.Host.HttpListener": "3.0.1"
+            }
+        },
+        "netcoreapp1.0": {
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "type": "platform",
+                    "version": "1.0.0-rc2-3002702"
+                }
+            },
+
+            "imports": [
+                "dotnet",
+                "portable-net451+win8"
+            ]
+        }
+    },
+     
+    "testRunner": "xunit"
+}
