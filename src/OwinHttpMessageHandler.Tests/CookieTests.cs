@@ -1,11 +1,11 @@
 ﻿namespace System.Net.Http
 {
     using System.Threading.Tasks;
-    using Microsoft.Owin;
     using Shouldly;
     using Xunit;
 
     using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;
+    using LibOwin;
 
     public class CookieTests
     {

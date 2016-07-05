@@ -1,0 +1,32 @@
+{
+    "version": "9.9.9",
+    "authors": [ "Damian Hickey" ],
+    "name": "OwinHttpMessageHandler",
+    "title": "Owin HttpMessageHandler for HttpClient",
+    "description": "An implementation of HttpMessageHandler for use with HttpClient that invokes requests directly against an OWIN application. Useful for testing and embedded scenarios.",
+    "packOptions": {
+        "requireLicenseAcceptance": false,
+        "licenseUrl": "https://github.com/damianh/OwinHttpMessageHandler/blob/master/LICENSE",
+        "releaseNotes": "Fix for redirect logic: only for 301 301 304 and 307",
+        "repository": { "url": "https://github.com/damianh/OwinHttpMessageHandler" },
+        "tags": [ "owin", "httpclient", "httpmessagehandler", "embedded" ]
+    },
+    "frameworks": {
+        "netstandard1.3": {
+            "dependencies": {
+                "System.Security.Principal": "4.0.1-rc2-24027",
+                "System.Security.Claims": "4.0.1-rc2-24027",
+                "NETStandard.Library": "1.5.0-rc2-24027",
+                "System.Globalization.Extensions": "4.0.1-rc2-24027"
+            }
+        },
+        "net452": {
+            "frameworkAssemblies": {
+                "System.Net.Http": "4.0.0.0"
+            },
+            "dependencies": {
+
+            }
+        }
+    }
+}

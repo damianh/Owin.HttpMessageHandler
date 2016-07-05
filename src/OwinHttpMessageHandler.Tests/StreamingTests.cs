@@ -1,7 +1,7 @@
 ﻿namespace System.Net.Http
 {
+    using LibOwin;
     using System.Threading.Tasks;
-    using Microsoft.Owin;
     using Xunit;
 
     using AppFunc = System.Func<Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>;

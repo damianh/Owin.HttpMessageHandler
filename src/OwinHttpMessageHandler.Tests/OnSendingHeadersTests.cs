@@ -2,15 +2,16 @@
 {
     using System.Linq;
     using System.Threading.Tasks;
-    using Microsoft.Owin;
+    using Shouldly;
+    using Xunit;
+    using AppFunc = Func<Collections.Generic.IDictionary<string, object>, Threading.Tasks.Task>;
+    using LibOwin;
+#if NET452
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.Testing;
     using Nowin;
     using Owin;
-    using Shouldly;
-    using Xunit;
-    using AppFunc = Func<Collections.Generic.IDictionary<string, object>, Threading.Tasks.Task>;
-
+#endif
     public class OnSendingHeadersTests
     {
         const string CookieName1 = "testcookie1";
@@ -75,7 +76,7 @@
             }
         }
 
-
+#if NET452
         [Fact]
         public async Task Using_nowin_then_should_have_2_cookies()
         {
@@ -103,6 +104,7 @@
                 }
             }
         }
+
 
         [Fact]
         public async Task Using_HttpListener_then_should_have_2_cookies()
@@ -140,5 +142,6 @@
                     .ShouldBe(2);
             }
         }
+#endif
     }
 }

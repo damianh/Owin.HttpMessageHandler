@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.Owin;
     using Shouldly;
     using Xunit;
 
@@ -18,6 +17,7 @@
             System.Threading.Tasks.Task
         >
     >;
+    using LibOwin;
 
     // ReSharper disable InconsistentNaming
     public class OwinHttpMessageHandlerTests
