@@ -1,6 +1,7 @@
 namespace System.Net.Http
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Owin;
     using Shouldly;
@@ -90,6 +91,22 @@ namespace System.Net.Http
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
+            }
+        }
+
+        [Theory]
+        [InlineData("Accept", "application/json")]
+        public async Task On_redirect_retains_request_headers(string header, string value)
+        {
+            using (var client = new HttpClient(_handler)
+            {                
+                BaseAddress = new Uri("http://localhost")
+            })
+            {
+                client.DefaultRequestHeaders.Add(header, value);
+                var response = await client.GetAsync("/redirect-absolute-301");
+
+                response.RequestMessage.Headers.GetValues(header).First().ShouldBe(value);
             }
         }
 

@@ -185,7 +185,9 @@
                 }
 
                 var redirectMethod = IsRedirectToGet(statusCode) ? HttpMethod.Get : request.Method;
-                request = new HttpRequestMessage(redirectMethod, location);
+                request.RequestUri = location;
+                request.Method = redirectMethod;
+
                 response = await SendInternalAsync(request, cancellationToken).NotOnCapturedContext();
 
                 statusCode = (int) response.StatusCode;
