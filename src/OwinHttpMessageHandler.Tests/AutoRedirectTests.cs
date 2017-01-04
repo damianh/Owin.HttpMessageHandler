@@ -96,6 +96,10 @@ namespace System.Net.Http
 
         [Theory]
         [InlineData("Accept", "application/json")]
+        [InlineData("Accept-Charset", "utf-8")]
+        [InlineData("Accept-Encoding", "gzip, deflate")]
+        [InlineData("Cache-Control", "no-cache")]
+        [InlineData("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/21.0")]
         public async Task On_redirect_retains_request_headers(string header, string value)
         {
             using (var client = new HttpClient(_handler)
@@ -106,7 +110,8 @@ namespace System.Net.Http
                 client.DefaultRequestHeaders.Add(header, value);
                 var response = await client.GetAsync("/redirect-absolute-301");
 
-                response.RequestMessage.Headers.GetValues(header).First().ShouldBe(value);
+                response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                response.RequestMessage.Headers.GetValues(header).ShouldBe(client.DefaultRequestHeaders.GetValues(header));
             }
         }
 
