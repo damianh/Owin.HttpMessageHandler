@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -103,6 +102,7 @@
 
         /// <summary>
         ///     Gets or sets a value that indicates whether the handler should follow redirection responses.
+        ///     Authorization headers are stripped on redirect.
         /// </summary>
         /// <returns>
         ///     Returns <see cref="T:System.Boolean"/>.true if the if the handler should follow redirection
@@ -187,6 +187,7 @@
                 var redirectMethod = IsRedirectToGet(statusCode) ? HttpMethod.Get : request.Method;
                 request.RequestUri = location;
                 request.Method = redirectMethod;
+                request.Headers.Authorization = null;
                 CheckSetCookie(request, response);
 
                 response = await SendInternalAsync(request, cancellationToken).NotOnCapturedContext();
