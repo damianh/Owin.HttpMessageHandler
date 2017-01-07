@@ -1,6 +1,7 @@
 namespace System.Net.Http
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
@@ -18,70 +19,112 @@ namespace System.Net.Http
 
         public AutoRedirectTests()
         {
+            Func<IOwinRequest, Task<string>> readToEnd = async request =>
+            {
+                using(var reader = new StreamReader(request.Body))
+                {
+                    return await reader.ReadToEndAsync();
+                }
+            };
+
             var responders = new Dictionary<string, Action<IOwinContext>>
             {
-                { "/redirect-301-absolute", context =>
+                { "/redirect-301-absolute", async context =>
                     {
                         context.Response.StatusCode = 301;
                         context.Response.ReasonPhrase = "Moved Permanently";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-301-absolute-setcookie", context =>
+                { "/redirect-301-relative", async context =>
+                    {
+                        context.Response.StatusCode = 301;
+                        context.Response.ReasonPhrase = "Moved Permanently";
+                        context.Response.Headers.Add("Location", new [] { "redirect" });
+                        await readToEnd(context.Request);
+                    }
+                },
+                { "/redirect-301-absolute-setcookie", async context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Moved Permanently";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
                         context.Response.Headers.Add("Set-Cookie", new []{ "foo=bar"});
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-302-absolute", context =>
+                { "/redirect-302-absolute", async context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Found";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-302-relative", context =>
+                { "/redirect-302-relative", async context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Found";
                         context.Response.Headers.Add("Location", new [] { "redirect" });
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-302-relative-setcookie", context =>
+                { "/redirect-302-relative-setcookie", async context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Found";
                         context.Response.Headers.Add("Location", new [] { "redirect" });
                         context.Response.Headers.Add("Set-Cookie", new []{ "foo=bar"});
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-303-absolute", context =>
+                { "/redirect-303-absolute", async context =>
                     {
                         context.Response.StatusCode = 303;
                         context.Response.ReasonPhrase = "See Other";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-307-absolute", context =>
+                { "/redirect-303-relative", async context =>
+                    {
+                        context.Response.StatusCode = 303;
+                        context.Response.ReasonPhrase = "See Other";
+                        context.Response.Headers.Add("Location", new [] { "redirect" });
+                        await readToEnd(context.Request);
+                    }
+                },
+                { "/redirect-307-absolute", async context =>
                     {
                         context.Response.StatusCode = 307;
                         context.Response.ReasonPhrase = "Temporary Redirect";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                        await readToEnd(context.Request);
                     }
                 },
-                { "/redirect-loop", context =>
+                { "/redirect-307-relative", async context =>
+                    {
+                        context.Response.StatusCode = 307;
+                        context.Response.ReasonPhrase = "Temporary Redirect";
+                        context.Response.Headers.Add("Location", new [] { "redirect" });
+                        await readToEnd(context.Request);
+                    }
+                },
+                { "/redirect-loop", async context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Found";
                         context.Response.Headers.Add("Location", new[] { "http://localhost/redirect-loop" });
+                        await readToEnd(context.Request);
                     }
                 },
                 {
-                    "/redirect", context =>
+                    "/redirect", async context =>
                     {
                         context.Response.StatusCode = 200;
+                        var requestBody = await readToEnd(context.Request);
+                        await context.Response.WriteAsync(requestBody);
                     }
                 }
             };
@@ -110,6 +153,25 @@ namespace System.Net.Http
             })
             {
                 var response = await client.GetAsync($"/redirect-{code}-absolute");
+
+                response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
+            }
+        }
+
+        [Theory]
+        [InlineData(301)]
+        [InlineData(302)]
+        [InlineData(303)]
+        [InlineData(307)]
+        public async Task Can_auto_redirect_with_relative_location(int code)
+        {
+            using (var client = new HttpClient(_handler)
+            {
+                BaseAddress = new Uri("http://localhost")
+            })
+            {
+                var response = await client.GetAsync($"/redirect-{code}-relative");
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
@@ -181,21 +243,6 @@ namespace System.Net.Http
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
                 response.RequestMessage.Method.ShouldBe(HttpMethod.Head);
-            }
-        }
-
-        [Fact]
-        public async Task Can_auto_redirect_with_relative_location()
-        {
-            using (var client = new HttpClient(_handler)
-            {
-                BaseAddress = new Uri("http://localhost")
-            })
-            {
-                var response = await client.GetAsync("/redirect-302-relative");
-
-                response.StatusCode.ShouldBe(HttpStatusCode.OK);
-                response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
             }
         }
 
