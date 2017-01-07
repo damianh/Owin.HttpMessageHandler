@@ -198,17 +198,10 @@
             return response;
         }
 
-        private static bool IsRedirectToGet(int code)
-        {            
-            return code == 301 || code == 302 || code == 303; 
-        }
+        private static bool IsRedirectToGet(int code) => code == 301 || code == 302 || code == 303;
 
-        private static bool IsBodylessRequest(HttpRequestMessage req)
-        {
-            return req.Method == HttpMethod.Get 
-                || req.Method == HttpMethod.Head 
-                || req.Method == HttpMethod.Delete;
-        }
+        private static bool IsBodylessRequest(HttpRequestMessage req) => 
+            req.Method == HttpMethod.Get || req.Method == HttpMethod.Head || req.Method == HttpMethod.Delete;
 
         private async Task<HttpResponseMessage> SendInternalAsync(
             HttpRequestMessage request,
