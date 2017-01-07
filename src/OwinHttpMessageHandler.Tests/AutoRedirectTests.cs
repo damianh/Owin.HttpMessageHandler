@@ -19,35 +19,51 @@ namespace System.Net.Http
         {
             var responders = new Dictionary<string, Action<IOwinContext>>
             {
-                { "/redirect-absolute-302", context =>
+                { "/redirect-301-absolute", context =>
+                    {
+                        context.Response.StatusCode = 301;
+                        context.Response.ReasonPhrase = "Moved Permanently";
+                        context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                    }
+                },
+                { "/redirect-301-absolute-setcookie", context =>
+                    {
+                        context.Response.StatusCode = 302;
+                        context.Response.ReasonPhrase = "Moved Permanently";
+                        context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                        context.Response.Headers.Add("Set-Cookie", new []{ "foo=bar"});
+                    }
+                },
+                { "/redirect-302-absolute", context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Found";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
                     }
                 },
-                { "/redirect-relative", context =>
+                { "/redirect-302-relative", context =>
                     {
                         context.Response.StatusCode = 302;
                         context.Response.ReasonPhrase = "Found";
                         context.Response.Headers.Add("Location", new [] { "redirect" });
                     }
                 },
-                { "/redirect-absolute-301", context =>
+                { "/redirect-302-relative-setcookie", context =>
                     {
-                        context.Response.StatusCode = 301;
-                        context.Response.ReasonPhrase = "Moved Permanently";
-                        context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
+                        context.Response.StatusCode = 302;
+                        context.Response.ReasonPhrase = "Found";
+                        context.Response.Headers.Add("Location", new [] { "redirect" });
+                        context.Response.Headers.Add("Set-Cookie", new []{ "foo=bar"});
                     }
-                },                
-                { "/redirect-absolute-303", context =>
+                },
+                { "/redirect-303-absolute", context =>
                     {
                         context.Response.StatusCode = 303;
                         context.Response.ReasonPhrase = "See Other";
                         context.Response.Headers.Add("Location", new [] { "http://localhost/redirect" });
                     }
                 },
-                { "/redirect-absolute-307", context =>
+                { "/redirect-307-absolute", context =>
                     {
                         context.Response.StatusCode = 307;
                         context.Response.ReasonPhrase = "Temporary Redirect";
@@ -61,7 +77,16 @@ namespace System.Net.Http
                         context.Response.Headers.Add("Location", new[] { "http://localhost/redirect-loop" });
                     }
                 },
-                { "/redirect", context => context.Response.StatusCode = 200 }
+                {
+                    "/redirect", context =>
+                    {
+                        context.Response.StatusCode = 200;
+                        var cookiesReceived = 
+                            string.Join(";", context.Request.Headers.GetValues("Cookie")
+                            ?? Enumerable.Empty<string>());
+                        context.Response.Write(cookiesReceived);
+                    }
+                }
             };
             AppFunc appFunc = env =>
             {
@@ -87,7 +112,7 @@ namespace System.Net.Http
                 BaseAddress = new Uri("http://localhost")
             })
             {
-                var response = await client.GetAsync("/redirect-absolute-"+code);
+                var response = await client.GetAsync($"/redirect-{code}-absolute");
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
@@ -108,7 +133,7 @@ namespace System.Net.Http
             })
             {
                 client.DefaultRequestHeaders.Add(header, value);
-                var response = await client.GetAsync("/redirect-absolute-301");
+                var response = await client.GetAsync("/redirect-301-absolute");
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.Headers.GetValues(header).ShouldBe(client.DefaultRequestHeaders.GetValues(header));
@@ -123,10 +148,10 @@ namespace System.Net.Http
                 BaseAddress = new Uri("http://localhost")
             })
             {
-                var response = await client.PostAsync("/redirect-absolute-307", new StringContent("the-body"));
+                var response = await client.PostAsync("/redirect-307-absolute", new StringContent("the-body"));
 
                 response.StatusCode.ShouldBe(HttpStatusCode.TemporaryRedirect);
-                response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect-absolute-307");
+                response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect-307-absolute");
             }
         }
 
@@ -138,7 +163,7 @@ namespace System.Net.Http
                 BaseAddress = new Uri("http://localhost")
             })
             {
-                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, "/redirect-absolute-307"));
+                var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, "/redirect-307-absolute"));
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
@@ -154,7 +179,7 @@ namespace System.Net.Http
                 BaseAddress = new Uri("http://localhost")
             })
             {
-                var response = await client.GetAsync("/redirect-relative");
+                var response = await client.GetAsync("/redirect-302-relative");
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.RequestUri.AbsoluteUri.ShouldBe("http://localhost/redirect");
@@ -191,6 +216,22 @@ namespace System.Net.Http
                 var exception = await act.ShouldThrowAsync<InvalidOperationException>();
                 
                 exception.Message.ShouldContain("Limit = 10");
+            }
+        }
+
+        [Theory]
+        [InlineData("/redirect-301-absolute-setcookie")]
+        [InlineData("/redirect-302-relative-setcookie")]
+        public async Task Should_set_cookie_on_redirect(string path)
+        {
+            using (var client = new HttpClient(_handler)
+            {
+                BaseAddress = new Uri("http://localhost")
+            })
+            {
+                var response = await client.GetAsync(path);
+                var body = await response.Content.ReadAsStringAsync();
+                body.ShouldBe("foo=bar");
             }
         }
     }
