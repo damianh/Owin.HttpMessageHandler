@@ -81,10 +81,6 @@ namespace System.Net.Http
                     "/redirect", context =>
                     {
                         context.Response.StatusCode = 200;
-                        var cookiesReceived = 
-                            string.Join(";", context.Request.Headers.GetValues("Cookie")
-                            ?? Enumerable.Empty<string>());
-                        context.Response.Write(cookiesReceived);
                     }
                 }
             };
@@ -128,7 +124,7 @@ namespace System.Net.Http
         public async Task On_redirect_retains_request_headers(string header, string value)
         {
             using (var client = new HttpClient(_handler)
-            {                
+            {
                 BaseAddress = new Uri("http://localhost")
             })
             {
@@ -224,14 +220,14 @@ namespace System.Net.Http
         [InlineData("/redirect-302-relative-setcookie")]
         public async Task Should_set_cookie_on_redirect(string path)
         {
+            _handler.UseCookies = true;
             using (var client = new HttpClient(_handler)
             {
                 BaseAddress = new Uri("http://localhost")
             })
             {
                 var response = await client.GetAsync(path);
-                var body = await response.Content.ReadAsStringAsync();
-                body.ShouldBe("foo=bar");
+                response.RequestMessage.Headers.GetValues("Cookie").Single().ShouldBe("foo=bar");
             }
         }
     }

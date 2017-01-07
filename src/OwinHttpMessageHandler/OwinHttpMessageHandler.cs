@@ -187,6 +187,7 @@
                 var redirectMethod = IsRedirectToGet(statusCode) ? HttpMethod.Get : request.Method;
                 request.RequestUri = location;
                 request.Method = redirectMethod;
+                CheckSetCookie(request, response);
 
                 response = await SendInternalAsync(request, cancellationToken).NotOnCapturedContext();
 
@@ -253,12 +254,17 @@
             }, cancellationToken);
 
             HttpResponseMessage response = await state.ResponseTask.NotOnCapturedContext();
-            if (_useCookies && response.Headers.Contains("Set-Cookie"))
+            CheckSetCookie(request, response);
+            return response;
+        }
+
+        private void CheckSetCookie(HttpRequestMessage request, HttpResponseMessage response)
+        {
+            if(_useCookies && response.Headers.Contains("Set-Cookie"))
             {
-                string cookieHeader = string.Join(",", response.Headers.GetValues("Set-Cookie"));
+                var cookieHeader = string.Join(",", response.Headers.GetValues("Set-Cookie"));
                 _cookieContainer.SetCookies(request.RequestUri, cookieHeader);
             }
-            return response;
         }
 
         private void CheckDisposedOrStarted()
@@ -375,7 +381,7 @@
                 {
                     if (!response.Headers.TryAddWithoutValidation(header.Key, header.Value))
                     {
-                        bool success = response.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                        response.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
                     }
                 }
                 return response;
