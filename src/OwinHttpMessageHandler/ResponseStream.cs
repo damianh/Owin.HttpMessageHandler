@@ -29,7 +29,7 @@ namespace System.Net.Http
         {
             if (onFirstWrite == null)
             {
-                throw new ArgumentNullException("onFirstWrite");
+                throw new ArgumentNullException(nameof(onFirstWrite));
             }
             _onFirstWrite = onFirstWrite;
             _firstWrite = true;
@@ -40,20 +40,11 @@ namespace System.Net.Http
             _readWaitingForData = new TaskCompletionSource<object>();
         }
 
-        public override bool CanRead
-        {
-            get { return true; }
-        }
+        public override bool CanRead => true;
 
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
+        public override bool CanWrite => true;
 
         #region NotSupported
 
@@ -158,7 +149,7 @@ namespace System.Net.Http
             }
         }
 
-        public async override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             VerifyBuffer(buffer, offset, count, allowEmpty: false);
             CancellationTokenRegistration registration = cancellationToken.Register(Abort);
@@ -249,10 +240,7 @@ namespace System.Net.Http
             var tcs = new TaskCompletionSource<object>(state);
             tcs.TrySetResult(null);
             IAsyncResult result = tcs.Task;
-            if (callback != null)
-            {
-                callback(result);
-            }
+            callback?.Invoke(result);
             return result;
         }
 
@@ -278,16 +266,16 @@ namespace System.Net.Http
         {
             if (buffer == null)
             {
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
             }
             if (offset < 0 || offset > buffer.Length)
             {
-                throw new ArgumentOutOfRangeException("offset", offset, string.Empty);
+                throw new ArgumentOutOfRangeException(nameof(offset), offset, string.Empty);
             }
             if (count < 0 || count > buffer.Length - offset
                 || (!allowEmpty && count == 0))
             {
-                throw new ArgumentOutOfRangeException("count", count, string.Empty);
+                throw new ArgumentOutOfRangeException(nameof(count), count, string.Empty);
             }
         }
 

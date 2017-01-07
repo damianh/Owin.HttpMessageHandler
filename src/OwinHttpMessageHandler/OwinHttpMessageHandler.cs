@@ -167,12 +167,12 @@
 
             var response = await SendInternalAsync(request, cancellationToken).NotOnCapturedContext();
 
-            int redirectCount = 0;
-            int statusCode = (int)response.StatusCode;
+            var redirectCount = 0;
+            var statusCode = (int)response.StatusCode;
 
             while (_allowAutoRedirect && 
                 (IsRedirectToGet(statusCode) || 
-                (IsBodylessRequest(request) && statusCode == 307)))
+                IsBodylessRequest(request) && statusCode == 307))
             {
                 if(redirectCount >= _autoRedirectLimit)
                 {
@@ -209,7 +209,7 @@
         {
             if (_useCookies)
             {
-                string cookieHeader = _cookieContainer.GetCookieHeader(request.RequestUri);
+                var cookieHeader = _cookieContainer.GetCookieHeader(request.RequestUri);
                 if (!string.IsNullOrEmpty(cookieHeader))
                 {
                     request.Headers.Add("Cookie", cookieHeader);
@@ -218,15 +218,15 @@
 
             var state = new RequestState(request, cancellationToken);
 
-            HttpContent requestContent = request.Content ?? new StreamContent(Stream.Null);
-            Stream body = await requestContent.ReadAsStreamAsync().NotOnCapturedContext();
+            var requestContent = request.Content ?? new StreamContent(Stream.Null);
+            var body = await requestContent.ReadAsStreamAsync().NotOnCapturedContext();
             if (body.CanSeek)
             {
                 // This body may have been consumed before, rewind it.
                 body.Seek(0, SeekOrigin.Begin);
             }
             state.OwinContext.Request.Body = body;
-            CancellationTokenRegistration registration = cancellationToken.Register(state.Abort);
+            var registration = cancellationToken.Register(state.Abort);
 
             // Async offload, don't let the test code block the caller.
             Task offload = Task.Run(async () =>
@@ -297,7 +297,7 @@
 
                 OwinContext = new OwinContext();
                 OwinContext.Set("owin.Version", "1.0");
-                IOwinRequest owinRequest = OwinContext.Request;
+                var owinRequest = OwinContext.Request;
                 owinRequest.Protocol = "HTTP/" + request.Version.ToString(2);
                 owinRequest.Scheme = request.RequestUri.Scheme;
                 owinRequest.Method = request.Method.ToString();
@@ -336,17 +336,11 @@
                 OwinContext.Response.StatusCode = 200;
             }
 
-            public IOwinContext OwinContext { get; private set; }
+            public IOwinContext OwinContext { get; }
 
-            public IDictionary<string, object> Environment
-            {
-                get { return OwinContext.Environment; }
-            }
+            public IDictionary<string, object> Environment => OwinContext.Environment;
 
-            public Task<HttpResponseMessage> ResponseTask
-            {
-                get { return _responseTcs.Task; }
-            }
+            public Task<HttpResponseMessage> ResponseTask => _responseTcs.Task;
 
             internal void CompleteResponse()
             {
