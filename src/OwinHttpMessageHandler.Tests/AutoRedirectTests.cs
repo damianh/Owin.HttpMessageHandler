@@ -2,6 +2,7 @@ namespace System.Net.Http
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using Microsoft.Owin;
     using Shouldly;
@@ -133,6 +134,22 @@ namespace System.Net.Http
 
                 response.StatusCode.ShouldBe(HttpStatusCode.OK);
                 response.RequestMessage.Headers.GetValues(header).ShouldBe(client.DefaultRequestHeaders.GetValues(header));
+            }
+        }
+
+        [Fact]
+        public async Task On_redirect_strips_authorization_header()
+        {
+            using (var client = new HttpClient(_handler)
+            {
+                BaseAddress = new Uri("http://localhost")
+            })
+            {
+                client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse("foo");
+                var response = await client.GetAsync("/redirect-301-absolute");
+
+                response.StatusCode.ShouldBe(HttpStatusCode.OK);
+                response.RequestMessage.Headers.Authorization.ShouldBeNull();
             }
         }
 
