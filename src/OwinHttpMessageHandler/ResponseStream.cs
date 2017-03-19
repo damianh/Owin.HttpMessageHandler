@@ -26,10 +26,6 @@ namespace System.Net.Http
 
         internal ResponseStream(Action onFirstWrite)
         {
-            if (onFirstWrite == null)
-            {
-                throw new ArgumentNullException(nameof(onFirstWrite));
-            }
             _onFirstWrite = onFirstWrite;
             _firstWrite = true;
 
@@ -47,15 +43,12 @@ namespace System.Net.Http
 
         #region NotSupported
 
-        public override long Length
-        {
-            get { throw new NotSupportedException(); }
-        }
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
-            get { throw new NotSupportedException(); }
-            set { throw new NotSupportedException(); }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
 
         public override long Seek(long offset, SeekOrigin origin)

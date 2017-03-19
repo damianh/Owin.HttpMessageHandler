@@ -92,7 +92,7 @@
         /// </returns>
         public bool UseCookies
         {
-            get { return _useCookies; }
+            get => _useCookies;
             set
             {
                 CheckDisposedOrStarted();
@@ -110,7 +110,7 @@
         /// </returns>
         public bool AllowAutoRedirect
         {
-            get { return _allowAutoRedirect; }
+            get => _allowAutoRedirect;
             set
             {
                 CheckDisposedOrStarted();
@@ -126,7 +126,7 @@
         /// </value>
         public int AutoRedirectLimit
         {
-            get { return _autoRedirectLimit; }
+            get => _autoRedirectLimit;
             set
             {
                 CheckDisposedOrStarted();
@@ -147,7 +147,7 @@
         /// </returns>
         public CookieContainer CookieContainer 
         {
-            get { return _cookieContainer; }
+            get => _cookieContainer;
             set
             {
                 CheckDisposedOrStarted();
@@ -229,7 +229,7 @@
             var registration = cancellationToken.Register(state.Abort);
 
             // Async offload, don't let the test code block the caller.
-            Task offload = Task.Run(async () =>
+            var offload = Task.Run(async () =>
             {
                 try
                 {
@@ -352,7 +352,7 @@
                 }
             }
 
-            internal HttpResponseMessage GenerateResponse()
+            private HttpResponseMessage GenerateResponse()
             {
                 _sendingHeaders();
 
