@@ -5,7 +5,6 @@ namespace System.Net.Http
     using System;
     using System.Collections.Concurrent;
     using System.IO;
-    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -233,7 +232,7 @@ namespace System.Net.Http
             }
         }
 
-#if !DNXCORE50
+#if NET45
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
             Write(buffer, offset, count);
@@ -245,7 +244,7 @@ namespace System.Net.Http
         }
 
         public override void EndWrite(IAsyncResult asyncResult)
-        {}
+        { }
 #endif
 
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
