@@ -6,7 +6,6 @@
     using Microsoft.Owin;
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.Testing;
-    using Nowin;
     using Owin;
     using Shouldly;
     using Xunit;
