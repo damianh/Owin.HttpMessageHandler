@@ -18,8 +18,7 @@ Task("RestorePackages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    DotNetCoreRestore("./src");
-    //NuGetRestore(solution);
+    DotNetCoreRestore(solution);
 });
 
 Task("Build")
