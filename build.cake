@@ -18,7 +18,8 @@ Task("RestorePackages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
-    NuGetRestore(solution);
+    DotNetCoreRestore("./src");
+    //NuGetRestore(solution);
 });
 
 Task("Build")
@@ -51,7 +52,8 @@ Task("NuGetPack")
     var settings = new DotNetCorePackSettings
     {
         Configuration = "Release",
-        OutputDirectory = "./artifacts/"
+        OutputDirectory = "./artifacts/",
+        NoBuild = true,
     };
     DotNetCorePack("./src/OwinHttpMessageHandler", settings);
 });
