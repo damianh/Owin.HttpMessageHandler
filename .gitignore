@@ -111,6 +111,7 @@ UpgradeLog*.XML
 # Cake
 tools/**
 !tools/packages.config
+artifacts
 
 # dotnetcli
 .dotnet
