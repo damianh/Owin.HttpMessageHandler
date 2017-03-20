@@ -44,18 +44,18 @@
         /// <exception cref="System.ArgumentNullException">midFunc</exception>
         public OwinHttpMessageHandler(MidFunc midFunc)
         {
-            if (midFunc == null)
+            _appFunc = midFunc?.Invoke(env =>
             {
-                throw new ArgumentNullException(nameof(midFunc));
-            }
-
-            _appFunc = midFunc(env =>
-            {
-                var context = new OwinContext(env);
-                context.Response.StatusCode = 404;
-                context.Response.ReasonPhrase = "Not Found";
+                new OwinContext(env)
+                {
+                    Response =
+                    {
+                        StatusCode = 404,
+                        ReasonPhrase = "Not Found"
+                    }
+                };
                 return Task.FromResult(0);
-            });
+            }) ?? throw new ArgumentNullException(nameof(midFunc));
         }
 
         /// <summary>
@@ -65,12 +65,7 @@
         /// <exception cref="System.ArgumentNullException">appFunc</exception>
         public OwinHttpMessageHandler(AppFunc appFunc)
         {
-            if (appFunc == null)
-            {
-                throw new ArgumentNullException(nameof(appFunc));
-            }
-
-            _appFunc = appFunc;
+            _appFunc = appFunc ?? throw new ArgumentNullException(nameof(appFunc));
         }
 
         protected override void Dispose(bool disposing)
@@ -92,7 +87,7 @@
         /// </returns>
         public bool UseCookies
         {
-            get { return _useCookies; }
+            get => _useCookies;
             set
             {
                 CheckDisposedOrStarted();
@@ -110,7 +105,7 @@
         /// </returns>
         public bool AllowAutoRedirect
         {
-            get { return _allowAutoRedirect; }
+            get => _allowAutoRedirect;
             set
             {
                 CheckDisposedOrStarted();
@@ -126,7 +121,7 @@
         /// </value>
         public int AutoRedirectLimit
         {
-            get { return _autoRedirectLimit; }
+            get => _autoRedirectLimit;
             set
             {
                 CheckDisposedOrStarted();
@@ -147,7 +142,7 @@
         /// </returns>
         public CookieContainer CookieContainer 
         {
-            get { return _cookieContainer; }
+            get => _cookieContainer;
             set
             {
                 CheckDisposedOrStarted();
@@ -229,7 +224,9 @@
             var registration = cancellationToken.Register(state.Abort);
 
             // Async offload, don't let the test code block the caller.
-            Task offload = Task.Run(async () =>
+#pragma warning disable 4014
+            Task.Run(async () =>
+#pragma warning restore 4014
             {
                 try
                 {
@@ -247,7 +244,7 @@
                 }
             }, cancellationToken);
 
-            HttpResponseMessage response = await state.ResponseTask.NotOnCapturedContext();
+            var response = await state.ResponseTask.NotOnCapturedContext();
             CheckSetCookie(request, response);
             return response;
         }
@@ -346,13 +343,13 @@
             {
                 if (!_responseTcs.Task.IsCompleted)
                 {
-                    HttpResponseMessage response = GenerateResponse();
+                    var response = GenerateResponse();
                     // Dispatch, as TrySetResult will synchronously execute the waiters callback and block our Write.
                     Task.Factory.StartNew(() => _responseTcs.TrySetResult(response));
                 }
             }
 
-            internal HttpResponseMessage GenerateResponse()
+            private HttpResponseMessage GenerateResponse()
             {
                 _sendingHeaders();
 

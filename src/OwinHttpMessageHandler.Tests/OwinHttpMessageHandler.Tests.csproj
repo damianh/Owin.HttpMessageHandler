@@ -100,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OwinHttpMessageHandler\OwinHttpMessageHandler.csproj">
-      <Project>{81FFABF2-7F75-4766-A3DC-0EE10652EDF2}</Project>
+      <Project>{4e0c002f-24ac-48f2-a301-08030608e810}</Project>
       <Name>OwinHttpMessageHandler</Name>
     </ProjectReference>
   </ItemGroup>

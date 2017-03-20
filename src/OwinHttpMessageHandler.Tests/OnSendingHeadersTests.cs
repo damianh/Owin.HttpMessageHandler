@@ -1,5 +1,6 @@
 ﻿namespace System.Net.Http
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Owin;
@@ -20,25 +21,25 @@
 
         public OnSendingHeadersTests()
         {
-            AppFunc inner = async env =>
+            async Task Inner(IDictionary<string, object> env)
             {
                 var context = new OwinContext(env);
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync("Test");
-            };
+            }
 
-            AppFunc inner2 = async env =>
+            async Task Inner2(IDictionary<string, object> env)
             {
                 var context = new OwinContext(env);
                 context.Response.OnSendingHeaders(_ =>
                 {
-                    if (context.Response.StatusCode ==  404)
+                    if (context.Response.StatusCode == 404)
                     {
                         context.Response.Cookies.Append(CookieName1, "c1");
                     }
                 }, null);
-                await inner(env);
-            };
+                await Inner(env);
+            }
 
             _appFunc = async env =>
             {
@@ -50,7 +51,7 @@
                         context.Response.Cookies.Append(CookieName2, "c2");
                     }
                 }, null);
-                await inner2(env);
+                await Inner2(env);
             };
         }
 
