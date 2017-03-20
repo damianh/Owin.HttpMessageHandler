@@ -76,35 +76,6 @@
             }
         }
 
-
-        [Fact]
-        public async Task Using_nowin_then_should_have_2_cookies()
-        {
-            using (var server = ServerBuilder
-                .New()
-                .SetEndPoint(new IPEndPoint(IPAddress.Any, _uri.Port))
-                .SetOwinApp(_appFunc)
-                .Build())
-            {
-                server.Start();
-
-                var handler = new HttpClientHandler
-                {
-                    UseCookies = true
-                };
-                using (var client = new HttpClient(handler)
-                {
-                    BaseAddress = _uri
-                })
-                {
-                    var response = await client.GetAsync(_uri);
-
-                    response.Headers.GetValues("Set-Cookie")
-                        .Count().ShouldBe(2);
-                }
-            }
-        }
-
         [Fact]
         public async Task Using_HttpListener_then_should_have_2_cookies()
         {
