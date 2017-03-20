@@ -28,11 +28,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard1.3|AnyCPU'">
-    <DocumentationFile>bin\Debug\net45\OwinHttpMessageHandler.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard1.3\OwinHttpMessageHandler.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.3|AnyCPU'">
-    <DocumentationFile>bin\Release\net45\OwinHttpMessageHandler.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.3\OwinHttpMessageHandler.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
