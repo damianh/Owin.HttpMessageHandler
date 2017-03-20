@@ -42,7 +42,7 @@ Task("RunTests")
         { 
             ToolPath = "./tools/xunit.runner.console/tools/xunit.console.exe"
         };
-        XUnit(dll,settings);
+        XUnit(dll, settings);
 });
 
 Task("NuGetPack")

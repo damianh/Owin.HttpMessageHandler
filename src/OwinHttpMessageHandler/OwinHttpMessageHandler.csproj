@@ -10,7 +10,7 @@
     <Description>An implementation of HttpMessageHandler for use with HttpClient that invokes requests directly against an OWIN application. Useful for testing and embedded scenarios.</Description>
     <PackageReleaseNotes>Support for NetStandard1.3</PackageReleaseNotes>
     <PackageTags>owin httpclient httpmessagehandler embedded</PackageTags>
-    <Version>1.3.6</Version>
+    <Version>1.3.7</Version>
     <Company />
     <PackageProjectUrl>https://github.com/damianh/OwinHttpMessageHandler</PackageProjectUrl>
     <RepositoryUrl>https://github.com/damianh/OwinHttpMessageHandler</RepositoryUrl>
