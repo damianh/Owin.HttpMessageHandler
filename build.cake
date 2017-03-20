@@ -18,6 +18,7 @@ Task("RestorePackages")
     .IsDependentOn("Clean")
     .Does(() =>
 {
+    NuGetRestore(solution);
     DotNetCoreRestore(solution);
 });
 
