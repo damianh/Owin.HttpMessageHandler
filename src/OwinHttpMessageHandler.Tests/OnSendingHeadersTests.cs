@@ -69,9 +69,9 @@
             {
                 var response = await client.GetAsync(_uri);
 
-                var setCookies = response.Headers.GetValues("Set-Cookie");
+                var setCookies = response.Headers.GetValues("Set-Cookie").ToArray();
 
-                setCookies.Count().ShouldBe(2);
+                setCookies.Length.ShouldBe(2, string.Join(";", setCookies));
             }
         }
 
