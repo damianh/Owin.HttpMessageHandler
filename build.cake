@@ -1,7 +1,5 @@
 #tool "nuget:?package=xunit.runner.console&version=2.1.0"
 
-#addin "Cake.FileHelpers"
-
 var target          = Argument("target", "Default");
 var configuration   = Argument("configuration", "Release");
 var artifactsDir    = Directory("./artifacts");
