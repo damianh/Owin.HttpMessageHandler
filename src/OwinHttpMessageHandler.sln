@@ -8,9 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OwinHttpMessageHandler.Tests", "OwinHttpMessageHandler.Tests\OwinHttpMessageHandler.Tests.csproj", "{954281C1-E27C-4850-A609-34395AB14F6E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{34F282A0-5AB6-43A2-871B-0433AAF78440}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OwinHttpMessageHandler.Tests", "OwinHttpMessageHandler.Tests\OwinHttpMessageHandler.Tests.csproj", "{954281C1-E27C-4850-A609-34395AB14F6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OwinHttpMessageHandler", "OwinHttpMessageHandler\OwinHttpMessageHandler.csproj", "{4E0C002F-24AC-48F2-A301-08030608E810}"
 EndProject
@@ -24,10 +22,6 @@ Global
 		{954281C1-E27C-4850-A609-34395AB14F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{954281C1-E27C-4850-A609-34395AB14F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{954281C1-E27C-4850-A609-34395AB14F6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34F282A0-5AB6-43A2-871B-0433AAF78440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34F282A0-5AB6-43A2-871B-0433AAF78440}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34F282A0-5AB6-43A2-871B-0433AAF78440}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34F282A0-5AB6-43A2-871B-0433AAF78440}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4E0C002F-24AC-48F2-A301-08030608E810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4E0C002F-24AC-48F2-A301-08030608E810}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E0C002F-24AC-48F2-A301-08030608E810}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -35,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {11B119F6-854C-45D5-8E33-02F2455CAE4E}
 	EndGlobalSection
 EndGlobal
