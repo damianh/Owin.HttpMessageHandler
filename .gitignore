@@ -113,5 +113,7 @@ tools/**
 !tools/packages.config
 artifacts
 
+.vs
+
 # dotnetcli
 .dotnet

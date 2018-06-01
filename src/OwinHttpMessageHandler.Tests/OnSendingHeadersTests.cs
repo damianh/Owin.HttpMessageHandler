@@ -4,8 +4,10 @@
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Owin;
+#if NET471
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.Testing;
+#endif
     using Owin;
     using Shouldly;
     using Xunit;
@@ -74,7 +76,7 @@
                 setCookies.Length.ShouldBe(2, string.Join(";", setCookies));
             }
         }
-
+#if NET471
         [Fact]
         public async Task Using_HttpListener_then_should_have_2_cookies()
         {
@@ -111,5 +113,6 @@
                     .ShouldBe(2);
             }
         }
+#endif
     }
 }
