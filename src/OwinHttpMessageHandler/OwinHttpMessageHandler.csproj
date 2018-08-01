@@ -13,7 +13,7 @@
     <Version>2.0.1</Version>
     <PackageProjectUrl>https://github.com/damianh/OwinHttpMessageHandler</PackageProjectUrl>
     <RepositoryUrl>https://github.com/damianh/OwinHttpMessageHandler</RepositoryUrl>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyVersionAttribute>true</GenerateAssemblyVersionAttribute>
     <RootNamespace>System.Net.Http</RootNamespace>
   </PropertyGroup>
 
