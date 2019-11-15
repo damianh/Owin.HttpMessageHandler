@@ -1,3 +1,5 @@
+:warning: The package is no longer supported. If you have an application and require support, please contact me.
+
 OwinHttpMessageHandler [![Build status](https://ci.appveyor.com/api/projects/status/vf9qrs3cdnar24rf?svg=true)](https://ci.appveyor.com/project/damianh/OwinHttpMessageHandler) [![NuGet Status](http://img.shields.io/nuget/v/OwinHttpMessageHandler.svg?style=flat)](https://www.nuget.org/packages/OwinHttpMessageHandler/)
 =====================
 
